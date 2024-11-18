@@ -24,21 +24,21 @@ class KaryawanKontrak extends Karyawan {
       : super(nama, umur: umur, peran: peran);
 }
 
-class Pengembang extends Karyawan {
-  Pengembang(String nama, {required int umur})
-      : super(nama, umur: umur, peran: "Pengembang");
+class Developer extends Karyawan {
+  Developer(String nama, {required int umur})
+      : super(nama, umur: umur, peran: "developer");
 }
 
-class InsinyurJaringan extends Karyawan {
-  InsinyurJaringan(String nama, {required int umur})
-      : super(nama, umur: umur, peran: "InsinyurJaringan");
+class NetworkEngineer extends Karyawan {
+  NetworkEngineer(String nama, {required int umur})
+      : super(nama, umur: umur, peran: "networkEngineer");
 }
 
-class Manajer extends Karyawan {
-  Manajer(String nama, {required int umur})
-      : super(nama, umur: umur, peran: "Manajer") {
+class Amanager extends Karyawan {
+  Amanager(String nama, {required int umur})
+      : super(nama, umur: umur, peran: "amanager") {
     if (produktivitas > 85) {
-      throw Exception("Produktivitas Manajer harus minimal 85");
+      throw Exception("Produktivitas Amanager harus minimal 85");
     }
   }
 }
@@ -63,7 +63,7 @@ class Perusahaan {
 
   void tambahKaryawan(Karyawan karyawan) {
     if (karyawanAktif.length < 20) {
-      print("Karyawan ditambahkan");
+      print("Karyawan ditambahkan: ${karyawan.nama}");
       karyawanAktif.add(karyawan);
     } else {
       print("Jumlah maksimum karyawan aktif telah tercapai.");
@@ -141,9 +141,9 @@ void main() {
   print("\nHarga produk2 setelah diskon: ${produk2.harga}");
 
   // Membuat beberapa karyawan
-  var karyawan1 = KaryawanTetap("Ardi", umur: 19, peran: "Pengembang");
-  var karyawan2 = KaryawanKontrak("Jul", umur: 21, peran: "InsinyurJaringan");
-  var karyawan3 = Manajer("Jib", umur: 20);
+  var karyawan1 = Developer("Ardi", umur: 19);
+  var karyawan2 = NetworkEngineer("Salman", umur: 21);
+  var karyawan3 = Amanager("Arsal", umur: 20);
 
   // Menampilkan info karyawan
   print("\nKaryawan 1: ${karyawan1.nama}, Umur: ${karyawan1.umur}, Peran: ${karyawan1.peran}");

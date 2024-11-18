@@ -1,84 +1,110 @@
-// Enum untuk Status Mahasiswa
-enum StatusMahasiswa { aktif, cuti, alumni }
+// Enum untuk Status Pemesanan
+enum StatusPemesanan { menunggu, diproses, selesai, dibatalkan }
 
-// Abstract class untuk kehadiran
-abstract class Kehadiran {
-  void absensi();
+// Abstract class untuk Pengiriman
+abstract class Pengiriman {
+  void kirimBuku();
 }
 
-// Mixin untuk menambah fitur aktivitas organisasi
-mixin AktivitasOrganisasi {
-  void ikutOrganisasi(String organisasi) {
-    print('Ikut dalam organisasi $organisasi');
+// Mixin untuk menambah fitur Aktivitas Diskon
+mixin AktivitasDiskon {
+  void aplikasiDiskon(String kodeDiskon) {
+    print('  - Diskon dengan kode: $kodeDiskon diterapkan pada pembelian buku.');
   }
 }
 
-// Kelas dasar Mahasiswa
-class Mahasiswa {
+// Kelas dasar Pembeli
+class Pembeli {
   String nama;
-  String _npm;
-  String jurusan;
-  StatusMahasiswa status;
+  String _email;
+  String alamat;
+  StatusPemesanan status;
 
-  // Constructor dengan positional argument untuk nama, npm, dan jurusan
-  Mahasiswa(this.nama, this._npm, this.jurusan, this.status);
+  // Constructor dengan positional argument untuk nama, email, dan alamat
+  Pembeli(this.nama, this._email, this.alamat, this.status);
 
-  // Getter dan Setter untuk NPM dengan validasi panjang karakter
-  String get npm => _npm;
-  set npm(String value) {
-    if (value.length == 8) {
-      _npm = value;
+  // Getter dan Setter untuk Email dengan validasi format
+  String get email => _email;
+  set email(String value) {
+    if (value.contains('@')) {
+      _email = value;
     } else {
-      print('NPM harus 8 karakter.');
+      throw Exception('Email tidak valid.');
     }
   }
 
-  // Metode belajar
-  void belajar() {
-    print('$nama sedang belajar.');
+  // Metode untuk memesan buku
+  void pesanBuku() {
+    print('\n===== Proses Pemesanan Buku =====');
+    print('  - Pemesanan buku sedang diproses untuk $nama...');
+    Future.delayed(Duration(seconds: 1), () {
+      print('  - Pemesanan buku berhasil dilakukan oleh $nama.\n');
+    });
   }
 
-  // Metode menyelesaikan tugas
-  void menyelesaikanTugas() {
-    print('$nama telah menyelesaikan tugas.');
-  }
-
-  // Metode cek status mahasiswa
+  // Metode untuk memeriksa status pemesanan
   void cekStatus() {
-    print('$nama memiliki status $status');
+    String statusPemesanan = status.toString().split('.').last;
+    print('===== Status Pemesanan =====');
+    print('  - Pemesanan buku oleh $nama saat ini berstatus: $statusPemesanan.\n');
   }
 }
 
-// Kelas turunan MahasiswaAktif dengan inheritance dari Mahasiswa dan implementasi Kehadiran serta mixin AktivitasOrganisasi
-class MahasiswaAktif extends Mahasiswa with AktivitasOrganisasi implements Kehadiran {
-  int semester;
+// Kelas turunan PembeliAktif dengan inheritance dari Pembeli dan implementasi Pengiriman serta mixin AktivitasDiskon
+class PembeliAktif extends Pembeli with AktivitasDiskon implements Pengiriman {
+  String jenisBuku;
+  List<Map<String, dynamic>> daftarBuku = [];
+  double totalHarga = 0.0;
 
-  // Constructor dengan inheritance dari superclass Mahasiswa
-  MahasiswaAktif(String nama, String npm, String jurusan, StatusMahasiswa status, this.semester)
-      : super(nama, npm, jurusan, status);
+  // Constructor dengan inheritance dari superclass Pembeli
+  PembeliAktif(String nama, String email, String alamat, StatusPemesanan status, this.jenisBuku)
+      : super(nama, email, alamat, status);
 
-  // Implementasi metode absensi dari Kehadiran
+  // Implementasi metode kirimBuku dari Pengiriman
   @override
-  void absensi() {
-    print('$nama telah hadir di kelas.');
+  void kirimBuku() {
+    String waktu = DateTime.now().toLocal().toString();
+    print('===== Pengiriman Buku =====');
+    print('  - Buku jenis $jenisBuku dikirim ke $alamat pada waktu: $waktu.\n');
   }
 
-  // Metode khusus untuk mengambil KRS
-  void ambilKRS() {
-    print('$nama sedang mengambil KRS untuk semester $semester');
+  // Metode khusus untuk melakukan pembayaran
+  void lakukanPembayaran(double jumlahPembayaran) {
+    print('===== Pembayaran =====');
+    print('  - Pembayaran untuk buku $jenisBuku sebesar Rp$jumlahPembayaran telah diterima.\n');
+  }
+
+  // Menambah buku ke daftar pemesanan
+  void tambahBuku(String judulBuku, double harga) {
+    daftarBuku.add({'judul': judulBuku, 'harga': harga});
+    totalHarga += harga;
+    print('  - Buku "$judulBuku" ditambahkan dengan harga Rp$harga.');
+  }
+
+  // Menampilkan list hasil belanja dan total harga
+  void tampilkanListBelanja() {
+    print('===== Daftar Belanja =====');
+    for (var buku in daftarBuku) {
+      print('  - ${buku['judul']} | Harga: Rp${buku['harga']}');
+    }
+    print('===== Total Harga =====');
+    print('  - Total belanja: Rp$totalHarga\n');
   }
 }
 
 // Fungsi utama untuk menjalankan program
 void main() {
-  // Membuat objek mahasiswa
-  var mahasiswa = MahasiswaAktif('Ardi', '07352211021', 'Informatika', StatusMahasiswa.aktif, 5);
+  // Membuat objek pembeli aktif
+  var pembeli = PembeliAktif('Budi', 'budi@email.com', 'Jl. Merdeka No. 12', StatusPemesanan.menunggu, 'Pemrograman Dart');
 
   // Memanggil berbagai metode untuk menampilkan informasi
-  mahasiswa.belajar();
-  mahasiswa.menyelesaikanTugas();
-  mahasiswa.absensi();
-  mahasiswa.ambilKRS();
-  mahasiswa.ikutOrganisasi('HMTI');
-  mahasiswa.cekStatus();
+  pembeli.pesanBuku();
+  pembeli.tambahBuku('Pemrograman Dart', 100000);
+  pembeli.tambahBuku('Belajar Flutter', 150000);
+  pembeli.tambahBuku('Flutter untuk Pemula', 120000);
+  pembeli.cekStatus();
+  pembeli.aplikasiDiskon('DISKON20');
+  pembeli.lakukanPembayaran(370000);
+  pembeli.kirimBuku();
+  pembeli.tampilkanListBelanja(); // Menampilkan daftar belanja
 }
